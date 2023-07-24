@@ -20,17 +20,36 @@ pipeline {
         }
         stage('Run Pylint') {
             steps {
+                when {
+                    expression {
+                        params.execution == 'Run'
+                    }
+                }
+            steps {
                 git branch: 'main', url: 'https://github.com/vegetariancoder/jai-jenkins'
                 sh 'pylint *.py'
             }
         }
         stage('Build Branch') {
             steps {
+                when {
+                    expression {
+                        params.execution == 'Run'
+                    }
+                }
+
+            steps {
                 git branch: 'main', url: 'https://github.com/vegetariancoder/jai-jenkins'
                 sh 'python3 running_sum.py'
             }
         }
         stage('Test Branch') {
+            steps {
+                when {
+                    expression {
+                        params.execution == 'Run'
+                    }
+                }
             steps {
                 sh 'python3 -m pytest'
             }
