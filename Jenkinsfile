@@ -3,13 +3,12 @@ pipeline {
 
     parameters {
         string(name: 'name', defaultValue: 'Sahil', description: 'username')
-        choice(name: 'execution', choices: ['Run','NotRun'], description: 'choose a value')
+        choice(name: 'execution', choices: ['Run', 'NotRun'], description: 'choose a value')
     }
     stages {
         stage('Fetch Parameters') {
             steps {
                 echo "Hello ${params.name}"
-
                 echo "desc: ${params.execution}"
             }
         }
@@ -19,37 +18,33 @@ pipeline {
             }
         }
         stage('Run Pylint') {
-            steps {
-                when {
-                    expression {
-                        params.execution == 'Run'
-                    }
+            when {
+                expression {
+                    params.execution == 'Run'
                 }
+            }
             steps {
                 git branch: 'main', url: 'https://github.com/vegetariancoder/jai-jenkins'
                 sh 'pylint *.py'
             }
         }
         stage('Build Branch') {
-            steps {
-                when {
-                    expression {
-                        params.execution == 'Run'
-                    }
+            when {
+                expression {
+                    params.execution == 'Run'
                 }
-
+            }
             steps {
                 git branch: 'main', url: 'https://github.com/vegetariancoder/jai-jenkins'
                 sh 'python3 running_sum.py'
             }
         }
         stage('Test Branch') {
-            steps {
-                when {
-                    expression {
-                        params.execution == 'Run'
-                    }
+            when {
+                expression {
+                    params.execution == 'Run'
                 }
+            }
             steps {
                 sh 'python3 -m pytest'
             }
